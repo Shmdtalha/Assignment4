@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
             Date date = new Date();
+            String timeId = (new SimpleDateFormat("yyyyMMdd_HHmmss")).format(date);
             tvTimeStamp.setText(formatter.format(date));
 
             AlertDialog.Builder addItemDialog = new AlertDialog.Builder(MainActivity.this)
@@ -81,14 +82,18 @@ public class MainActivity extends AppCompatActivity {
                                 float price = Float.parseFloat(priceText);
 
                                 HashMap<String, Object> data = new HashMap<>();
-                                data.put("name", "idk");
-                                data.put("quantity", 10);
-                                data.put("price", 10);
+                                data.put("name", productName);
+                                data.put("quantity", quantity);
+                                data.put("price", price);
+
 
                                 Log.d("Firebase", "Attempting to save product");
-                                FirebaseDatabase.getInstance().getReference().child("Products").push()
+                                FirebaseDatabase.getInstance().getReference()
+                                        .child("products")
+                                        .child(timeId)
                                         .setValue(data)
                                         .addOnCompleteListener(task -> {
+                                            Log.d("Firebase", "Trying to save product");
                                             if (task.isSuccessful()) {
                                                 Log.d("Firebase", "Product saved successfully");
                                                 Toast.makeText(MainActivity.this, "Product Created", Toast.LENGTH_LONG).show();
@@ -116,4 +121,6 @@ public class MainActivity extends AppCompatActivity {
 
         });
     }
+
+
 }
