@@ -15,13 +15,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -31,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton btnAddNewItem;
     TextView tvItem;
+    RecyclerView rvItems;
+    ItemsAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +52,21 @@ public class MainActivity extends AppCompatActivity {
         Log.d("FirebaseInit", "Firebase initialized successfully");
         btnAddNewItem = findViewById(R.id.btnAddNewItem);
         tvItem = findViewById(R.id.tvItem);
+        rvItems = findViewById(R.id.rvItems);
+
+        Query query  = FirebaseDatabase.getInstance()
+                .getReference()
+                .child("products");
+
+
+        FirebaseRecyclerOptions<Item> options =
+                new FirebaseRecyclerOptions.Builder<Item>()
+                        .setQuery(query, Item.class)
+                                .build();
+
+        adapter = new ItemsAdapter(options);
+        rvItems.setAdapter(adapter);
+
 
         btnAddNewItem.setOnClickListener(l->{
 
@@ -120,7 +140,23 @@ public class MainActivity extends AppCompatActivity {
             addItemDialog.show();
 
         });
+
+
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
+
+
 
 
 }
