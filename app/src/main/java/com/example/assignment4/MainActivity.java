@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tvItem;
     RecyclerView rvItems;
     ItemsAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         tvItem = findViewById(R.id.tvItem);
         rvItems = findViewById(R.id.rvItems);
 
+
         Query query  = FirebaseDatabase.getInstance()
                 .getReference()
                 .child("products");
@@ -64,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                         .setQuery(query, Item.class)
                                 .build();
 
-        adapter = new ItemsAdapter(options);
+        adapter = new ItemsAdapter(options, getApplicationContext());
         rvItems.setAdapter(adapter);
 
 
